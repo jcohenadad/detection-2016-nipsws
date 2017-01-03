@@ -26,15 +26,15 @@ if __name__ == "__main__":
     ######## PATHS definition ########
 
     # path of pascal voc test
-    path_voc_test = "./VOC2007_test/"
+    path_voc_test = "/Users/julien/code/deep_learning/VOC2007/"
     # model name of the weights
     model_name = "model_image_zooms"
     # path of folder where the weights are
-    weights_path = "../models_image_zooms/"
+    weights_path = "/Users/julien/code/deep_learning/models_image_zooms/"
     # path of where to store visualizations of search sequences
-    path_testing_folder = '../testing/'
+    path_testing_folder = '/Users/julien/code/deep_learning/testing/'
     # path of VGG16 weights
-    path_vgg = "../vgg16_weights.h5"
+    path_vgg = "/Users/julien/code/deep_learning/vgg16_weights.h5"
 
      ######## MODELS ########
 
