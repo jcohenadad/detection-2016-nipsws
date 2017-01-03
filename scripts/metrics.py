@@ -3,6 +3,12 @@ import cv2
 
 
 def calculate_iou(img_mask, gt_mask):
+    """
+    Calculate Intersection Over Union (iou)
+    :param img_mask:
+    :param gt_mask: Mask of ground truth (tight-fit bounding box)
+    :return:
+    """
     gt_mask *= 1.0
     img_and = cv2.bitwise_and(img_mask, gt_mask)
     img_or = cv2.bitwise_or(img_mask, gt_mask)

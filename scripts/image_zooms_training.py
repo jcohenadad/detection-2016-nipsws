@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ######## PARAMETERS ########
 
     # Class category of PASCAL that the RL agent will be searching
-    class_object = 1
+    class_object = 1  # 1=plane
     # Scale of subregion for the hierarchical regions (to deal with 2/4, 3/4)
     scale_subregion = float(3)/4
     scale_mask = float(1)/(scale_subregion*4)
@@ -281,7 +281,7 @@ if __name__ == "__main__":
                     available_objects[index] = 0
         if epsilon > 0.1:
             epsilon -= 0.1
-        for t in range (np.size(models)):
+        for t in range(np.size(models)):
             if t == (class_object-1):
                 string = path_model + '/model' + str(t) + '_epoch_' + str(i) + 'h5'
                 string2 = path_model + '/model' + str(t) + 'h5'
