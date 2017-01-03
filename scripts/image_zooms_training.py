@@ -88,11 +88,11 @@ if __name__ == "__main__":
     ######## LOAD IMAGE NAMES ########
 
     if two_databases == 1:
-        image_names1 = np.array([load_images_names_in_data_set('trainval', path_voc)])
-        image_names2 = np.array([load_images_names_in_data_set('trainval', path_voc2)])
+        image_names1 = np.array([load_images_names_in_data_set('aeroplane', path_voc)])
+        image_names2 = np.array([load_images_names_in_data_set('aeroplane', path_voc2)])
         image_names = np.concatenate([image_names1, image_names2])
     else:
-        image_names = np.array([load_images_names_in_data_set('trainval', path_voc)])
+        image_names = np.array([load_images_names_in_data_set('aeroplane', path_voc)])
 
     ######## LOAD IMAGES ########
 
@@ -109,20 +109,24 @@ if __name__ == "__main__":
             not_finished = 1
             image = np.array(images[j])
             image_name = image_names[0][j]
+            # get bounding box: [type, xmin, xmax, ymin, ymax], with type: 12=dog, 15=person, etc. (based on files listed in ImageSets/Main
             annotation = get_bb_of_gt_from_pascal_xml_annotation(image_name, path_voc)
             if two_databases == 1:
                 if j < np.size(image_names1):
                     annotation = get_bb_of_gt_from_pascal_xml_annotation(image_name, path_voc)
                 else:
                     annotation = get_bb_of_gt_from_pascal_xml_annotation(image_name, path_voc2)
+            # generate binary mask for each object
             gt_masks = generate_bounding_box_from_annotation(annotation, image.shape)
+            # create an array of object class. E.g.: [12, 15] for dog and person
             array_classes_gt_objects = get_ids_objects_from_annotation(annotation)
+            # region_mask is a mask of the entire image, and then gets smaller after each iteration
             region_mask = np.ones([image.shape[0], image.shape[1]])
             shape_gt_masks = np.shape(gt_masks)
             available_objects = np.ones(np.size(array_classes_gt_objects))
             # Iterate through all the objects in the ground truth of an image
             for k in range(np.size(array_classes_gt_objects)):
-                # Init visualization
+                # Create large image for visualizing each iteration
                 background = Image.new('RGBA', (10000, 2500), (255, 255, 255, 255))
                 draw = ImageDraw.Draw(background)
                 # We check whether the ground truth object is of the target class category
