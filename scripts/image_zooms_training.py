@@ -1,3 +1,5 @@
+
+
 import cv2, numpy as np
 import time
 import math as mth
@@ -34,15 +36,15 @@ if __name__ == "__main__":
     ######## PATHS definition ########
 
     # path of PASCAL VOC 2012 or other database to use for training
-    path_voc = "./VOC2012/"
+    path_voc = "/Users/julien/code/deep_learning/VOC2007"  # no slash at the end
     # path of other PASCAL VOC dataset, if you want to train with 2007 and 2012 train datasets
     path_voc2 = "./VOC2007/"
     # path of where to store the models
-    path_model = "../models_image_zooms"
+    path_model = "/Users/julien/code/deep_learning/models_image_zooms_julien"
     # path of where to store visualizations of search sequences
-    path_testing_folder = '../testing_visualizations'
+    path_testing_folder = '/Users/julien/code/deep_learning/testing_visualizations'
     # path of VGG16 weights
-    path_vgg = "../vgg16_weights.h5"
+    path_vgg = "/Users/julien/code/deep_learning/vgg16_weights.h5"
 
     ######## PARAMETERS ########
 
