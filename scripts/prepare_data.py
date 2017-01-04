@@ -91,10 +91,12 @@ if __name__ == "__main__":
     # generate subject list
     list_path_subjects, list_name_subjects = generate_data_list(path_data)
 
-    # remove subjects without data
+    # only keep subjects without data
+    list_path_subjects_tmp = []
     for path_subject in list_path_subjects:
-        if not os.path.exists(path_subject + contrast + '/' + contrast + '.nii.gz'):
-            list_path_subjects.pop(list_path_subjects.index(path_subject))
+        if os.path.exists(path_subject + contrast + '/' + contrast + '.nii.gz'):
+            list_path_subjects_tmp.append(path_subject)
+    list_path_subjects = list_path_subjects_tmp
 
     # Loop across subjects
     for path_subject in list_path_subjects:
@@ -150,3 +152,6 @@ if __name__ == "__main__":
         import scipy.misc
         scipy.misc.toimage(np.fliplr(np.flipud(data2d.transpose())), cmin=0.0, cmax=1.0).save(
             path_out_im + name_subject + '.png')
+
+    # remove temp file
+    os.remove('temp.nii.gz')
