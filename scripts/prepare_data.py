@@ -9,6 +9,7 @@ import os
 import numpy as np
 import nipy
 from matplotlib.pylab import *
+import json
 
 # Path to SCT
 path_sct = '/Users/julien/code/sct/'  # slash at the end
@@ -19,8 +20,10 @@ import sct_utils as sct
 
 # Parameters
 path_data = '/Users/julien/data/sct_test_function/'  # Path to MRI data (slash at the end)
+path_out_annot = '/Users/julien/data/deep_learning/Annotations/'
+path_out_im = '/Users/julien/data/deep_learning/JPEGImages/'
 contrast = 't2'  # contrast to use
-
+sizeX = 3  # size for L-R averaging for disk identification
 
 def resample_to_1mm(nii):
     """
@@ -96,6 +99,8 @@ if __name__ == "__main__":
     # Loop across subjects
     for path_subject in list_path_subjects:
 
+        name_subject = path_subject.split(os.sep)[-2]
+
         # Open MRI data
         fname_data = path_subject + contrast + '/' + contrast + '.nii.gz'
         im = Image(fname_data)
@@ -112,19 +117,36 @@ if __name__ == "__main__":
         data1mm = resample_to_1mm(nii).get_data()
 
         # Average from mid-plane across R-L direction
-        data2d = np.sum(data1mm, axis=0)
+        nx = data1mm.shape[0]
+        data2d = np.sum(data1mm[np.round(nx/2) - sizeX: np.round(nx/2) + sizeX, :, :], axis=0)
+
+        # Normalize intensity between 0 and 1 based on percentile
+        percmin = np.percentile(data2d, 5)
+        percmax = np.percentile(data2d, 95)
+        data2d = (data2d - percmin) / percmax
+        # trim
+        data2d[data2d < 0] = 0.0
+        data2d[data2d > 1] = 1.0
 
         # Open label data
         fig = plt.figure()
-        matshow(data2d, fignum=1, cmap=cm.gray)
+        matshow(data2d.transpose(), fignum=1, cmap=cm.gray)  #, interpolation='none')
+        ax = plt.gca()
+        ax.invert_xaxis()
+        ax.invert_yaxis()
+        ax.set_title('Please click in the cord at C2/C3 disk')
+        # bbox_inches = 'tight'
+        # plt.savefig(path_out_im + name_subject + '.jpg')
         coords = []
         cid = fig.canvas.mpl_connect('button_press_event', onclick)
         plt.show(1)
-        print coords
-
-
-        # Get bounding box from label
-
-        # Save image
 
         # Save Annotation as json file
+        annotation = {'coord': coords}
+        with open(path_out_annot + name_subject + '.json', 'w') as fp:
+            json.dump(annotation, fp)
+
+        # Save image
+        import scipy.misc
+        scipy.misc.toimage(np.fliplr(np.flipud(data2d.transpose())), cmin=0.0, cmax=1.0).save(
+            path_out_im + name_subject + '.png')
